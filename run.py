@@ -2,6 +2,7 @@
 from importlib.machinery import SourceFileLoader, FileFinder
 import sys
 import tokenize
+from compose import charmap
 
 def xfrm(tok, state):
 	"""Given a token, return that token or a transformed version.
@@ -18,9 +19,8 @@ def xfrm(tok, state):
 				if not delim: break
 				char, delim, was = after.partition("]")
 				if not delim: raise SyntaxError("Unterminated \\[...] character escape")
-				# TODO: Build up a nice table from the compose key sequences
-				if char == "oo": now += "°"
-				else: raise SyntaxError("Unrecognized character escape \\[%s]" % char)
+				try: now += charmap[char]
+				except LookupError: raise SyntaxError("Unrecognized character escape \\[%s]" % char) from None
 			return tok._replace(string=now)
 	return tok
 
