@@ -19,6 +19,19 @@ def xfrm(tok, state):
 				if not delim: break
 				char, delim, was = after.partition("]")
 				if not delim: raise SyntaxError("Unterminated \\[...] character escape")
+				# Since it's otherwise impossible to include the string delimiter inside an escape,
+				# provide some rudimentary backslash parsing.
+				if "\\" in char:
+					steps = iter(char)
+					char = ""
+					for c in steps:
+						if c == "\\":
+							c = next(steps)
+							if c not in "\\\"'": 
+								raise SyntaxError("Unrecognized backslash escape \\%s" % c)
+							# The only supported backslash escapes inside \[...] are themselves,
+							# ie "\[a\"]" is the same as '\[a"]' as if the backslash were not there.
+						char += c
 				try: now += charmap[char]
 				except LookupError: raise SyntaxError("Unrecognized character escape \\[%s]" % char) from None
 			return tok._replace(string=now)
