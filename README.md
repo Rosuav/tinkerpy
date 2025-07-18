@@ -17,7 +17,7 @@ Take a copy of template.py and modify it to your needs. The central function
 is xfrm(), which receives a stream of tokens (one at a time) and returns the
 token unchanged, or a modified token.
 
-   return tok._replace(...) # Return a token like the original but altered
+    return tok._replace(...) # Return a token like the original but altered
 
 Create your own test program, and have the modified runner import that instead
 of app. Voila! You have a tweaked Python to play with.
